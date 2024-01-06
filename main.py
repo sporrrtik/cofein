@@ -1,10 +1,13 @@
-from fastapi import Depends, FastAPI, HTTPException, Form
+from typing import Annotated
+from fastapi import Cookie, Depends, FastAPI, HTTPException, Form, Header, Query
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware import Middleware
+from starlette import status
 
 import crud, models, schemas
 from database import SessionLocal, engine
@@ -17,7 +20,7 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Dependency
-def get_db():
+def get_db() -> Session:
     db = SessionLocal()
     try:
         yield db
@@ -26,8 +29,9 @@ def get_db():
 
 
 @app.get("/")
-def start(request: Request):
-    return templates.TemplateResponse("index.html", context={"request": request})
+def start(request: Request, db: Session = Depends(get_db)):
+    items = crud.get_items(db, limit=6)
+    return templates.TemplateResponse("index.html", context={"request": request, 'items': items})
 
 
 @app.post("/enter")
@@ -35,12 +39,16 @@ def enter(email=Form(), password=Form(), db: Session = Depends(get_db)):
     cur_user = crud.get_user_by_email(db, email=email)
     if not cur_user:
         return RedirectResponse("/enter_page")
-    return cur_user
+    rr = RedirectResponse('/lc', status_code=status.HTTP_302_FOUND)
+    rr.set_cookie('email', cur_user.email)
+    return rr
 
 
 @app.get("/enter_page")
 @app.post("/enter_page")
-def enter_page(request: Request):
+def enter_page(request: Request, email: Annotated[str | None, Cookie()] = None):
+    if email is not None:
+        return RedirectResponse('/lc', status_code=status.HTTP_302_FOUND)
     return templates.TemplateResponse("enter.html", context={"request": request})
 
 
@@ -60,38 +68,119 @@ def registration_page(request: Request):
 
 
 @app.get("/lc")
-def personal_page(request: Request):
-    return templates.TemplateResponse("lc.html", context={"request": request})
+def personal_page(
+    request: Request, 
+    email: Annotated[str | None, Cookie()] = None,
+    db: Session = Depends(get_db),
+):
+    if email is None:
+        return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
+    query = "SELECT c.id, it.id AS itemid, it.title, it.price, it.image_url FROM carts AS c JOIN items AS it ON c.item_id=it.id WHERE email=:email;"
+    current_cart = db.execute(text(query).bindparams(email=email)).mappings().all()
+    price = 0
+    item_ids = []
+    for item in current_cart:
+        price += item.price
+        item_ids.append(item.itemid)
+    item_ids = ','.join((str(v) for v in item_ids))
+
+    query = "SELECT * FROM orders WHERE email=:email"
+    orders = db.execute(text(query).bindparams(email=email)).mappings().all()
+    return templates.TemplateResponse(
+        "lc.html",
+        context={"request": request, 'orders': orders, 'email': email, 'cart': current_cart, 'price': price, 'item_ids': item_ids},
+    )
 
 
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+@app.get('/add_to_cart')
+def add_item_to_cart(
+    item_id: int | None = Query(default=None),
+    email: Annotated[str | None, Cookie()] = None,
+    db: Session = Depends(get_db),
+):
+    if not email:
+        return RedirectResponse('/enter_page', status_code=status.HTTP_302_FOUND)
+    if not item_id:
+        print('no item id in query')
+        return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
+    try:
+        new_cart_item = models.Cart(
+            email=email,
+            item_id=item_id,
+        )
+        db.add(new_cart_item)
+        db.commit()
+    except Exception as e:
+        print(f'failed to save cart as {e}')
+    return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
 
-@app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
-    return users
+@app.get('/delete_from_cart')
+def delete_item_from_cart(
+    id: int | None = Query(default=None), 
+    db: Session = Depends(get_db),
+):
+    try:
+        query = 'DELETE FROM carts WHERE id=:id;'
+        db.execute(text(query).bindparams(id=id))
+        db.commit()
+    except Exception as e:
+        print(f'error while deleting {e}')
+    return RedirectResponse('/lc', status_code=status.HTTP_302_FOUND)
 
 
-@app.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+@app.get('/confirm_order')
+def confirm_order(
+    item_ids: str | None = Query(default=None),
+    price: int | None = Query(default=None),
+    email: Annotated[str | None, Cookie()] = None,
+    db: Session = Depends(get_db),
+):
+    try:
+        order = models.Order(
+            email=email,
+            ordered_items=item_ids,
+            total_price=price,
+        )
+        db.add(order)
+
+        query = 'DELETE FROM carts WHERE email=:email;'
+        db.execute(text(query).bindparams(email=email))
+
+        db.commit()
+    except Exception as e:
+        print(f'error while confirming order {e}')
+    return RedirectResponse('/lc', status_code=status.HTTP_302_FOUND)
 
 
-@app.post("/users/{user_id}/items/", response_model=schemas.Item)
-def create_item_for_user(user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)):
-    return crud.create_user_item(db=db, item=item, user_id=user_id)
+@app.on_event('startup')
+async def fill_database():
+    session = SessionLocal()
+    if session.execute(text('SELECT * FROM items;')).scalars().all():
+        return
+    item1 = models.Item(
+        id=1,
+        title='#1. Chicken Chilis',
+        image_url='http://127.0.0.1:8000/static/img/delicious/1.png',
+        description='Craft beer elit seitan exercitation photo booth et 8-bit kale chips.',
+        price=2000
+    )
+    item2 = models.Item(
+        id=2,
+        title='#2. Пельмени',
+        image_url='http://127.0.0.1:8000/static/img/delicious/2.png',
+        description='ну очень вкусные пельмени много мяса мало теста.',
+        price=2000
+    )
+    item3 = models.Item(
+        id=3,
+        title='#3. Вафли',
+        image_url='http://127.0.0.1:8000/static/img/delicious/3.png',
+        description='просто вафли.',
+        price=2000
+    )
+    session.add(item1)
+    session.add(item2)
+    session.add(item3)
+    session.commit()
 
-
-@app.get("/items/", response_model=list[schemas.Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
-    return items

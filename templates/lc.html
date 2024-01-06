@@ -1,10 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/css/magnific-popup.css">
+    <link rel="stylesheet" href="static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/themify-icons.css">
+    <link rel="stylesheet" href="static/css/gijgo.css">
+    <link rel="stylesheet" href="static/css/nice-select.css">
+    <link rel="stylesheet" href="static/css/flaticon.css">
+    <link rel="stylesheet" href="static/css/slicknav.css">
+    <link rel="stylesheet" href="static/css/style.css">   
     <meta charset="UTF-8">
     <title>Title</title>
+    <script>
+        function clearCookies() {
+            var allCookies = document.cookie.split(';');
+            for (var i = 0; i < allCookies.length; i++) {
+                document.cookie = allCookies[i] + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+            window.location.reload();
+        }
+        function homePage() {
+            window.location.replace('/');
+        }
+    </script>
 </head>
 <body>
-Личный кабинет
+    Добро пожаловать, {{ email }}!
+    <button onclick="clearCookies()">Выйти</button>
+    <button onclick="homePage()">На главную</button>
+    <h1>Моя корзина</h1>
+    {% for item in cart %}
+    <div class="col-xl-6 col-md-6 col-lg-6">
+        <div class="single_delicious d-flex align-items-center">
+            <div class="thumb">
+                <img src={{item.image_url}}>
+            </div>
+            <div class="info">
+                <h3>{{item.title}}</h3>
+                <span>{{item.price}}P</span>
+                <a href="/delete_from_cart?id={{item.id}}">Удалить из корзины</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% if cart %}
+    <h3>Общая стоимость заказа: {{ price }}.</h3>
+    <a href="/confirm_order?item_ids={{item_ids}}&price={{price}}">Подтвердить заказ</a>
+    {% else %}
+    <h3>Корзина пока пуста, закажите что нибудь на главной странице!</h3>
+    {% endif %}
+
+    <h1>История заказов</h1>
+    {% for order in orders %}
+    <h3>Заказ #{{order.id}} на сумму {{order.total_price}}</h3>
+    {% else %}
+    <h3>Заказов пока не было</h3>
+    {% endfor %}
 </body>
 </html>

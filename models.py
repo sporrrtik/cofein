@@ -11,8 +11,6 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
 
-    items = relationship("Item", back_populates="owner")
-
 
 class Item(Base):
     __tablename__ = "items"
@@ -20,6 +18,25 @@ class Item(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     description = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    image_url = Column(String, nullable=False)
+    price = Column(Integer, nullable=False)
 
-    owner = relationship("User", back_populates="items")
+
+class Cart(Base):
+    __tablename__ = "carts"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(ForeignKey('users.email'), nullable=False)
+    item_id = Column(ForeignKey('items.id'), nullable=False)
+
+    owner = relationship('User')
+    item = relationship('Item')
+
+
+class Order(Base):
+    __tablename__ = "orders"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(ForeignKey('users.email'), nullable=False)
+    ordered_items = Column(String, nullable=False)
+    total_price = Column(Integer, nullable=False)
+    active = Column(Boolean, default=True)
