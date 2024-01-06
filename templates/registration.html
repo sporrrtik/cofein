@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+{% if error %}
+{{ error }}
+{% endif %}
+<h2>Форма ввода</h2>
+    <form action="reg" method="post">
+        <p>
+            Email:<br>
+            <input name="email" />
+        </p>
+        <p>
+            Password:<br>
+            <input name="password" type="password"/>
+        </p>
+        <p>
+            Repeat password:<br>
+            <input name="password2" type="password"/>
+        </p>
+        <input type="submit" value="Send"/>
+    </form>
+</body>
+</html>
