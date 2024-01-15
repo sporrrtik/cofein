@@ -39,6 +39,10 @@ def enter(email=Form(), password=Form(), db: Session = Depends(get_db)):
     cur_user = crud.get_user_by_email(db, email=email)
     if not cur_user:
         return RedirectResponse("/enter_page")
+    elif cur_user.is_worker:
+        rr = RedirectResponse('/worker_page', status_code=status.HTTP_302_FOUND)
+        rr.set_cookie('email', cur_user.email)
+        return rr
     rr = RedirectResponse('/lc', status_code=status.HTTP_302_FOUND)
     rr.set_cookie('email', cur_user.email)
     return rr
@@ -46,8 +50,11 @@ def enter(email=Form(), password=Form(), db: Session = Depends(get_db)):
 
 @app.get("/enter_page")
 @app.post("/enter_page")
-def enter_page(request: Request, email: Annotated[str | None, Cookie()] = None):
+def enter_page(request: Request, email: Annotated[str | None, Cookie()] = None, db: Session = Depends(get_db)):
     if email is not None:
+        cur_user = crud.get_user_by_email(db, email=email)
+        if cur_user.is_worker:
+            return RedirectResponse('/worker_page', status_code=status.HTTP_302_FOUND)
         return RedirectResponse('/lc', status_code=status.HTTP_302_FOUND)
     return templates.TemplateResponse("enter.html", context={"request": request})
 
@@ -90,6 +97,37 @@ def personal_page(
         "lc.html",
         context={"request": request, 'orders': orders, 'email': email, 'cart': current_cart, 'price': price, 'item_ids': item_ids},
     )
+
+@app.get("/worker_page")
+def worker_page(
+    request: Request,
+    email: Annotated[str | None, Cookie()] = None,
+    db: Session = Depends(get_db),
+):
+    if email is None:
+        return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
+    query = "SELECT c.id, it.id AS itemid, it.title, it.price, it.image_url FROM carts AS c JOIN items AS it ON c.item_id=it.id WHERE email=:email;"
+    current_cart = db.execute(text(query).bindparams(email=email)).mappings().all()
+    query = "SELECT * FROM orders WHERE active=1"
+    current_orders = db.execute(text(query)).mappings().all()
+    print(current_orders)
+    query = "SELECT * FROM items"
+    current_orders = db.execute(text(query)).mappings().all()
+    print(current_orders)
+    price = 0
+    item_ids = []
+    for item in current_cart:
+        price += item.price
+        item_ids.append(item.itemid)
+    item_ids = ','.join((str(v) for v in item_ids))
+
+    query = "SELECT * FROM orders WHERE email=:email"
+    orders = db.execute(text(query).bindparams(email=email)).mappings().all()
+    return templates.TemplateResponse(
+        "worker_lc.html",
+        context={"request": request, 'orders': orders, 'email': email, 'cart': current_cart, 'price': price, 'item_ids': item_ids},
+    )
+
 
 
 @app.get('/add_to_cart')
@@ -160,27 +198,51 @@ async def fill_database():
         return
     item1 = models.Item(
         id=1,
-        title='#1. Chicken Chilis',
-        image_url='http://127.0.0.1:8000/static/img/delicious/1.png',
-        description='Craft beer elit seitan exercitation photo booth et 8-bit kale chips.',
-        price=2000
+        title='#1. Латте',
+        image_url='http://127.0.0.1:8000/static/img/coffee/latte.jpg',
+        description='Нежное сочетание горячего молока и ароматного эспрессо, украшенное воздушной пенкой и оттененное нежным ароматом ванили.',
+        price=120
     )
     item2 = models.Item(
         id=2,
-        title='#2. Пельмени',
-        image_url='http://127.0.0.1:8000/static/img/delicious/2.png',
-        description='ну очень вкусные пельмени много мяса мало теста.',
-        price=2000
+        title='#2. Капучино',
+        image_url='http://127.0.0.1:8000/static/img/coffee/cappuccino.jpg',
+        description='Идеальное сочетание горячего молока, густой пены и крепкого эспрессо, украшенное аппетитной порцией какао.',
+        price=120
     )
     item3 = models.Item(
         id=3,
-        title='#3. Вафли',
-        image_url='http://127.0.0.1:8000/static/img/delicious/3.png',
-        description='просто вафли.',
-        price=2000
+        title='#3. Раф',
+        image_url='http://127.0.0.1:8000/static/img/coffee/raf.jpg',
+        description='Наслаждение неповторимым сочетанием кремового молока и крепкого эспрессо, украшенное изысканным шоколадом и корицей.',
+        price=150
+    )
+    item4 = models.Item(
+        id=4,
+        title='#4. Американо',
+        image_url='http://127.0.0.1:8000/static/img/coffee/americano.jpg',
+        description='Освежающее сочетание горячей воды и ароматного эспрессо, предлагающее сладкую гармонию вкусов',
+        price=90
+    )
+    item5 = models.Item(
+        id=5,
+        title='#5. Эспрессо',
+        image_url='http://127.0.0.1:8000/static/img/coffee/espresso.jpg',
+        description='Настоящее итальянское искусство - совершенное сочетание крепкости и яркости, дарящее истинное удовольствие каждому глотку.',
+        price=90
+    )
+    item6 = models.Item(
+        id=6,
+        title='#6. Фраппе',
+        image_url='http://127.0.0.1:8000/static/img/coffee/frappe.jpg',
+        description='Охлажденная классика с молочным взбитым кремом и замечательным ароматом кофе, приправленная ледяной прохладой и невероятным вкусом.',
+        price=180
     )
     session.add(item1)
     session.add(item2)
     session.add(item3)
+    session.add(item4)
+    session.add(item5)
+    session.add(item6)
     session.commit()
 

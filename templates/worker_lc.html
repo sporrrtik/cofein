@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="static/css/nice-select.css">
     <link rel="stylesheet" href="static/css/flaticon.css">
     <link rel="stylesheet" href="static/css/slicknav.css">
-    <link rel="stylesheet" href="static/css/style.css">   
+    <link rel="stylesheet" href="static/css/style.css">
     <meta charset="UTF-8">
     <title>Title</title>
     <script>
@@ -27,7 +27,7 @@
     </script>
 </head>
 <body>
-    Добро пожаловать, {{ email }}!
+    Добро пожаловать, worker {{ email }}!
     <button onclick="clearCookies()">Выйти</button>
     <button onclick="homePage()">На главную</button>
     <h1>Моя корзина</h1>
@@ -45,17 +45,10 @@
         </div>
     </div>
     {% endfor %}
-    
-    {% if cart %}
-    <h3>Общая стоимость заказа: {{ price }}.</h3>
-    <a href="/confirm_order?item_ids={{item_ids}}&price={{price}}">Подтвердить заказ</a>
-    {% else %}
-    <h3>Корзина пока пуста, закажите что нибудь на главной странице!</h3>
-    {% endif %}
 
     <h1>История заказов</h1>
     {% for order in orders %}
-    <h3>Заказ #{{order.id}} на сумму {{order.total_price}} рублей</h3>
+    <h3>Заказ #{{order.id}} на сумму {{order.total_price}}</h3>
     {% else %}
     <h3>Заказов пока не было</h3>
     {% endfor %}

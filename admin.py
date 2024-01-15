@@ -5,13 +5,12 @@ from flask import Flask
 from flask_admin import Admin
 
 from database import SessionLocal
-from models import Item, Order
-
+from models import Item, Order, User
 
 
 def init_flask() -> Flask:
     app = Flask('auction_admin')
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devsecretkey1111')
+    # app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devsecretkey1111')
     app.config['FLASK_ADMIN_FLUID_LAYOUT'] = True
 
     def sqla_session_middleware(environ, start_response):
@@ -26,7 +25,6 @@ def init_flask() -> Flask:
 
 app = init_flask()
 admin = Admin(app, name='Coffee Shop Admin', template_mode='bootstrap4')
-
 
 from flask_admin.contrib.sqla import ModelView
 
@@ -65,12 +63,22 @@ class OrdersView(SQLAModelView):
     )
 
 
+class UsersView(SQLAModelView):
+    model = User
+
+    column_filters = (
+        'id',
+        'email',
+        'is_worker',
+    )
+
+
 with SessionLocal.begin():
     admin.add_views(
         ItemsView(name='Меню'),
         OrdersView(name='Заказы'),
+        UsersView(name='Пользователи')
     )
-
 
 # XXX: Remove "Home" page
 admin.menu().pop(0)

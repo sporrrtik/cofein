@@ -42,7 +42,11 @@
                             <div class="col-xl-3 col-lg-2">
                                 <div class="logo">
                                     <a href="index.html">
-                                        <img src="static/img/logo.png" alt="">
+                                        <div style="padding: 5px; background-color: #db9a64; width:189px; height:100px;
+                                         text-align: center; padding-top: 30px; color: white;  font-size: 20px;">
+                                            COFEIN
+                                        </div>
+<!--                                        <img src="static/img/logo.png" alt="">-->
                                     </a>
                                 </div>
                             </div>
@@ -51,20 +55,14 @@
                                     <nav>
                                         <ul id="navigation">
                                             <li><a class="active" href="index.html">home</a></li>
-                                            <li><a href="Menu.html">Menu</a></li>
-                                            <li><a href="#">pages <i class="ti-angle-down"></i></a>
-                                                <ul class="submenu">
-                                                    <li><a href="about.html">about</a></li>
-                                                    <li><a href="elements.html">elements</a></li>
-                                                </ul>
-                                            </li>
+                                            <li><a href="#menu">Menu</a></li>
                                             <li><a href="#">blog <i class="ti-angle-down"></i></a>
                                                 <ul class="submenu">
                                                     <li><a href="blog.html">blog</a></li>
                                                     <li><a href="single-blog.html">single-blog</a></li>
                                                 </ul>
                                             </li>
-                                            <li><a href="contact.html">Contact</a></li>
+                                            <li><a href="#contact">Contact</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -94,9 +92,8 @@
                     <div class="row align-items-center justify-content-center">
                         <div class="col-xl-9 col-md-9 col-md-12">
                             <div class="slider_text text-center">
-                                <h3>Fresh and Delicious Food
-                                    For your Health</h3>
-                                <a href="menu.html" class="boxed-btn3">View Menus</a>
+                                <h3>Вкусный и ароматный кофе</h3>
+                                <a href="#menu" class="boxed-btn3">Посмотреть меню</a>
                             </div>
                         </div>
                     </div>
@@ -170,11 +167,11 @@
                 <div class="col-lg-6">
                     <div class="about_img">
                         <div class="img_1">
-                            <img src="static/img/about/big.png" alt="">
+                            <img src="static/img/about/about_3.jpg" alt="">
                         </div>
-                        <div class="small_img">
-                            <img src="static/img/about/small.png" alt="">
-                        </div>
+<!--                        <div class="small_img">-->
+<!--                            <img src="static/img/about/about_4.jpg" alt="" width="10">-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -188,7 +185,7 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="section_title text-center mb-50">
-                        <h3>Delicious Food For You</h3>
+                        <h3 id="menu">Наивкуснейший кофе только для тебя</h3>
                     </div>
                 </div>
             </div>
@@ -200,7 +197,7 @@
                         <div class="col-xl-6 col-md-6 col-lg-6">
                             <div class="single_delicious d-flex align-items-center">
                                 <div class="thumb">
-                                    <img src={{item.image_url}} alt="">
+                                    <img src={{item.image_url}} alt="" height="166" width="166">
                                 </div>
                                 <div class="info">
                                     <h3>{{item.title}}</h3>
@@ -220,8 +217,7 @@
                     <div class="row">
                         <div class="col-xl-12">
                             <div class="section_title text-center mb-50">
-                                <p>Testimonials</p>
-                                <h3>Our Customer’s Say</h3>
+                                <h3>Наши покупатели говорят</h3>
                             </div>
                         </div>
                     </div>
@@ -231,17 +227,18 @@
                                 <div class="single_carousel">
                                     <div class="single_testmonial ">
                                         <div class="author_opinion">
-                                            <p>“Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor
-                                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec
-                                                sed
-                                                neque.</p>
+                                            <p>"Это место - настоящий рай для ценителей кофе! Уютная атмосфера,
+                                                профессиональный бариста и великолепное меню, наполненное изысканными напитками.
+                                                Латте с ванильным ароматом заставляет сердце биться чаще, а раф с шоколадным
+                                                украшением превращает каждый визит в незабываемое событие.
+                                                Это истинное удовольствие для всех чувств!"</p>
                                         </div>
                                         <div class="testmonial_author">
                                             <div class="thumb">
-                                                <img src="static/img/testimonial/author.png" alt="">
+                                                <img src="static/img/testimonial/author.jpg" alt="" height="70" width="70">
                                             </div>
                                             <div class="name">
-                                                <h3>Robert Thomson</h3>
+                                                <h3>Александр Петров</h3>
                                                 <div class="icon">
                                                     <a href="#"><i class="fa fa-star"></i> </a>
                                                     <a href="#"><i class="fa fa-star"></i> </a>
@@ -256,17 +253,18 @@
                                 <div class="single_carousel">
                                     <div class="single_testmonial ">
                                         <div class="author_opinion">
-                                            <p>“Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor
-                                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec
-                                                sed
-                                                neque.</p>
+                                            <p>"Кофейня, которую нельзя забыть! Капучино с аппетитной порцией какао сразу
+                                                же завоевывает вкусовые рецепторы, а эспрессо оставляет неизгладимое
+                                                впечатление своей яркостью и насыщенностью. Отличный выбор напитков,
+                                                великолепная обстановка и отзывчивый персонал - здесь я нашел свой идеальный
+                                                уголок для настоящего кофейного наслаждения!"</p>
                                         </div>
                                         <div class="testmonial_author">
                                             <div class="thumb">
-                                                <img src="static/img/testimonial/author2.png" alt="">
+                                                <img src="static/img/testimonial/author2.jpg" alt="" height="70" width="70">
                                             </div>
                                             <div class="name">
-                                                <h3>Kristiana Chouhan</h3>
+                                                <h3>Лусинэ Геворкян</h3>
                                                 <div class="icon">
                                                     <a href="#"><i class="fa fa-star"></i> </a>
                                                     <a href="#"><i class="fa fa-star"></i> </a>
@@ -281,17 +279,17 @@
                                 <div class="single_carousel">
                                     <div class="single_testmonial ">
                                         <div class="author_opinion">
-                                            <p>“Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor
-                                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec
-                                                sed
-                                                neque.</p>
+                                            <p>"Это место, где кофе становится искусством. Я в восторге от их американо
+                                                - такой глубокий и насыщенный вкус, просто завораживает. А фраппе - это
+                                                настоящая находка для жаркого дня, освежающий и восхитительно вкусный.
+                                                Кофейня с мировым уровнем!"</p>
                                         </div>
                                         <div class="testmonial_author">
                                             <div class="thumb">
-                                                <img src="static/img/testimonial/author2.png" alt="">
+                                                <img src="static/img/testimonial/author3.jpg" alt="" height="70" width="70">
                                             </div>
                                             <div class="name">
-                                                <h3>Kristiana Chouhan</h3>
+                                                <h3>Марго Робби</h3>
                                                 <div class="icon">
                                                     <a href="#"><i class="fa fa-star"></i> </a>
                                                     <a href="#"><i class="fa fa-star"></i> </a>
@@ -306,17 +304,17 @@
                                 <div class="single_carousel">
                                     <div class="single_testmonial ">
                                         <div class="author_opinion">
-                                            <p>“Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor
-                                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec
-                                                sed
-                                                neque.</p>
+                                            <p>"Здесь не просто делают кофе, они создают шедевры! Я всегда поражаюсь
+                                                мастерству и вниманию к деталям, которое проявляется в каждом их напитке.
+                                                Эспрессо - это нечто неповторимое, а латте просто уносит меня в нирвану.
+                                                Самое лучшее место для ценителей настоящего кофе."</p>
                                         </div>
                                         <div class="testmonial_author">
                                             <div class="thumb">
-                                                <img src="static/img/testimonial/author.png" alt="">
+                                                <img src="static/img/testimonial/author4.jpg" alt="" height="70" width="70">
                                             </div>
                                             <div class="name">
-                                                <h3>Robert Thomson</h3>
+                                                <h3>Евгений Мильковский</h3>
                                                 <div class="icon">
                                                     <a href="#"><i class="fa fa-star"></i> </a>
                                                     <a href="#"><i class="fa fa-star"></i> </a>
@@ -331,17 +329,17 @@
                                 <div class="single_carousel">
                                     <div class="single_testmonial ">
                                         <div class="author_opinion">
-                                            <p>“Donec imperdiet congue orci consequat mattis. Donec rutrum porttitor
-                                                sollicitudin. Pellentesque id dolor tempor sapien feugiat ultrices nec
-                                                sed
-                                                neque.</p>
+                                            <p>"Как я мог прожить без этого места раньше? Раф и капучино - это мои новые
+                                                любимчики. Вкус, аромат, обстановка - всё просто идеально. Я вижу,
+                                                что каждый напиток готовят с любовью и страстью, и это невероятно заметно
+                                                в каждом глотке. Буду сюда возвращаться снова и снова!"</p>
                                         </div>
                                         <div class="testmonial_author">
                                             <div class="thumb">
-                                                <img src="static/img/testimonial/author2.png" alt="">
+                                                <img src="static/img/testimonial/author5.jpg" alt="" height="70" width="70">
                                             </div>
                                             <div class="name">
-                                                <h3>Kristiana Chouhan</h3>
+                                                <h3>Данила Козловский</h3>
                                                 <div class="icon">
                                                     <a href="#"><i class="fa fa-star"></i> </a>
                                                     <a href="#"><i class="fa fa-star"></i> </a>
@@ -361,42 +359,42 @@
             <!-- /testimonial_area  -->
 
             <!-- gallery_start -->
-            <div class="gallery_area">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="section_title text-center mb-75">
-                                <h3>Photo Gallery</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="single_gallery big_img">
-                    <a class="popup-image" href="static/img/gallery/1.png"></a>
-                    <img src="static/img/gallery/1.png" alt="">
-                </div>
-                <div class="single_gallery small_img">
-                    <a class="popup-image" href="static/img/gallery/2.png"></a>
-                    <img src="static/img/gallery/2.png" alt="">
-                </div>
-                <div class="single_gallery small_img">
-                    <a class="popup-image" href="static/img/gallery/3.png"></a>
-                    <img src="static/img/gallery/3.png" alt="">
-                </div>
+<!--            <div class="gallery_area">-->
+<!--                <div class="container">-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-xl-12">-->
+<!--                            <div class="section_title text-center mb-75">-->
+<!--                                <h3>Photo Gallery</h3>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="single_gallery big_img">-->
+<!--                    <a class="popup-image" href="static/img/gallery/1.png"></a>-->
+<!--                    <img src="static/img/gallery/1.png" alt="">-->
+<!--                </div>-->
+<!--                <div class="single_gallery small_img">-->
+<!--                    <a class="popup-image" href="static/img/gallery/2.png"></a>-->
+<!--                    <img src="static/img/gallery/2.png" alt="">-->
+<!--                </div>-->
+<!--                <div class="single_gallery small_img">-->
+<!--                    <a class="popup-image" href="static/img/gallery/3.png"></a>-->
+<!--                    <img src="static/img/gallery/3.png" alt="">-->
+<!--                </div>-->
 
-                <div class="single_gallery small_img">
-                    <a class="popup-image" href="static/img/gallery/4.png"></a>
-                    <img src="static/img/gallery/4.png" alt="">
-                </div>
-                <div class="single_gallery small_img">
-                    <a class="popup-image" href="static/img/gallery/5.png"></a>
-                    <img src="static/img/gallery/5.png" alt="">
-                </div>
-                <div class="single_gallery big_img">
-                    <a class="popup-image" href="static/img/gallery/6.png"></a>
-                    <img src="static/img/gallery/6.png" alt="">
-                </div>
-            </div>
+<!--                <div class="single_gallery small_img">-->
+<!--                    <a class="popup-image" href="static/img/gallery/4.png"></a>-->
+<!--                    <img src="static/img/gallery/4.png" alt="">-->
+<!--                </div>-->
+<!--                <div class="single_gallery small_img">-->
+<!--                    <a class="popup-image" href="static/img/gallery/5.png"></a>-->
+<!--                    <img src="static/img/gallery/5.png" alt="">-->
+<!--                </div>-->
+<!--                <div class="single_gallery big_img">-->
+<!--                    <a class="popup-image" href="static/img/gallery/6.png"></a>-->
+<!--                    <img src="static/img/gallery/6.png" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- gallery end -->
             <div class="Reservation_area">
@@ -409,136 +407,23 @@
                 <div class="rev_icon_3 d-none d-md-block">
                     <img src="static/img/icon/6.png" alt="">
                 </div>
-                <div class="container p-0">
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="section_title text-center mb-75">
-                                <h3>Reservation</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row no-gutters">
-                        <div class="col-xl-6 col-lg-6">
-                            <div class="map_area">
-                                <div id="map" style="height: 480px; position: relative; overflow: hidden;"> </div>
-                                <script>
-                                    function initMap() {
-                                        var uluru = {
-                                            lat: -25.363,
-                                            lng: 131.044
-                                        };
-                                        var grayStyles = [{
-                                            featureType: "all",
-                                            stylers: [{
-                                                saturation: -90
-                                            },
-                                            {
-                                                lightness: 50
-                                            }
-                                            ]
-                                        },
-                                        {
-                                            elementType: 'labels.text.fill',
-                                            stylers: [{
-                                                color: '#ccdee9'
-                                            }]
-                                        }
-                                        ];
-                                        var map = new google.maps.Map(document.getElementById('map'), {
-                                            center: {
-                                                lat: -31.197,
-                                                lng: 150.744
-                                            },
-                                            zoom: 9,
-                                            styles: grayStyles,
-                                            scrollwheel: false
-                                        });
-                                    }
-                                </script>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="book_Form">
-                                <h3>Book a Table</h3>
-                                <div class="row ">
-                                    <div class="col-lg-6">
-                                        <div class="input_field mb_15">
-                                            <input type="text" placeholder="Your Name">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="input_field mb_15">
-                                            <input type="text" placeholder="Phone no.">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="input_field">
-                                            <input id="datepicker2" placeholder="Date">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="input_field">
-                                            <div class="input_field">
-                                                <select class="wide">
-                                                    <option data-display="Dinner">Dinner</option>
-                                                    <option value="1">Dinner</option>
-                                                    <option value="1">Dinner</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="input_field">
-                                            <select class="wide">
-                                                <option data-display="Person">Person</option>
-                                                <option value="1">Person</option>
-                                                <option value="1">Person</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-xl-12">
-                                        <button class="sumbit_btn" type="submit">Book</button>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="single_add d-flex">
-                                            <div class="icon">
-                                                <img src="static/img/svg_icon/address.svg" alt="">
-                                            </div>
-                                            <div class="ifno">
-                                                <h4>Address</h4>
-                                                <p>20/D, Kings road, Green lane</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <div class="single_add d-flex">
-                                            <div class="icon">
-                                                <img src="static/img/svg_icon/head.svg" alt="">
-                                            </div>
-                                            <div class="ifno">
-                                                <h4>Reservation</h4>
-                                                <p>+10 673 567 367</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- footer_start  -->
-            <footer class="footer">
+            <footer class="footer" id="contact">
                 <div class="footer_top">
                     <div class="container">
                         <div class="row">
                             <div class="col-xl-3 col-md-6 col-lg-3 ">
                                 <div class="footer_widget">
                                     <div class="footer_logo">
-                                        <a href="#">
-                                            <img src="static/img/footer_logo.png" alt="">
-                                        </a>
+<!--                                        <a href="#">-->
+<!--                                            <img src="static/img/coffee_logo.jpg" alt="" style="width: 100px; height: 100px;">-->
+<!--                                        </a>-->
+                                        <div style="padding: 5px; width:189px; height:100px;
+                                         text-align: center; padding-top: 30px; color: white;  font-size: 20px;">
+                                            COFEIN
+                                        </div>
                                     </div>
                                     <p>5th flora, 700/D kings road, green <br> lane New York-1782 <br>
                                         <a href="#">+10 367 826 2567</a> <br>
@@ -581,19 +466,19 @@
 
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-md-6 col-lg-4 offset-xl-1">
-                                <div class="footer_widget">
-                                    <h3 class="footer_title">
-                                        Useful Links
-                                    </h3>
-                                    <ul>
-                                        <li><a href="#">Menu</a></li>
-                                        <li><a href="#">About</a></li>
-                                        <li><a href="#"> Blog</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-xl-4 col-md-6 col-lg-4">
+<!--                            <div class="col-xl-4 col-md-6 col-lg-4 offset-xl-1">-->
+<!--                                <div class="footer_widget">-->
+<!--                                    <h3 class="footer_title">-->
+<!--                                        Useful Links-->
+<!--                                    </h3>-->
+<!--                                    <ul>-->
+<!--                                        <li><a href="#">Menu</a></li>-->
+<!--                                        <li><a href="#">About</a></li>-->
+<!--                                        <li><a href="#"> Blog</a></li>-->
+<!--                                    </ul>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="col-xl-4 col-md-6 col-lg-4" style="margin-left: auto;">
                                 <div class="footer_widget">
                                     <h3 class="footer_title">
                                         Subscribe
@@ -678,6 +563,7 @@
 
                 });
             </script>
+
 </body>
 
 </html>
