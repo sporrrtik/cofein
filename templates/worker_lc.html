@@ -27,28 +27,17 @@
     </script>
 </head>
 <body>
-    Добро пожаловать, worker {{ email }}!
-    <button onclick="clearCookies()">Выйти</button>
-    <button onclick="homePage()">На главную</button>
-    <h1>Моя корзина</h1>
-    {% for item in cart %}
-    <div class="col-xl-6 col-md-6 col-lg-6">
-        <div class="single_delicious d-flex align-items-center">
-            <div class="thumb">
-                <img src={{item.image_url}} height="166" width="166">
-            </div>
-            <div class="info">
-                <h3>{{item.title}}</h3>
-                <span>{{item.price}}P</span>
-                <a href="/delete_from_cart?id={{item.id}}">Удалить из корзины</a>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-
-    <h1>История заказов</h1>
+    <h2 style="text-align: center;">Хорошего рабочего дня, {{ email }}!
+    <button onclick="clearCookies()">Выйти</button></h2>
+<!--    <button onclick="homePage()">На главную</button>-->
+    <h1>Заказы</h1>
     {% for order in orders %}
-    <h3>Заказ #{{order.id}} на сумму {{order.total_price}}</h3>
+    <h3>Заказ #{{ order.id }} на сумму {{ order.total_price }}</h3>
+    {% for title, number in order.ordered_items.items() %}
+    <h4>{{ title }} -> {{ number }}</h4>
+    {% endfor %}
+    <a href="/inactive_order?id={{order.id}}" style="display: inline-block; padding: 7px; background: lightgrey; color: green; margin-left: 10px;
+border-radius: 10px;"> Заказ оплачен</a>
     {% else %}
     <h3>Заказов пока не было</h3>
     {% endfor %}

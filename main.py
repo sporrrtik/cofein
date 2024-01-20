@@ -19,6 +19,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
 # Dependency
 def get_db() -> Session:
     db = SessionLocal()
@@ -35,10 +36,12 @@ def start(request: Request, db: Session = Depends(get_db)):
 
 
 @app.post("/enter")
-def enter(email=Form(), password=Form(), db: Session = Depends(get_db)):
+def enter(request: Request, email=Form(), password=Form(), db: Session = Depends(get_db)):
     cur_user = crud.get_user_by_email(db, email=email)
-    if not cur_user:
-        return RedirectResponse("/enter_page")
+    if not cur_user or cur_user.hashed_password != password + "notreallyhashed":
+        # return RedirectResponse("/enter_page")
+        return templates.TemplateResponse("enter.html",
+                                          context={"request": request, "error": "Не совпадают либо логин, либо пароль"})
     elif cur_user.is_worker:
         rr = RedirectResponse('/worker_page', status_code=status.HTTP_302_FOUND)
         rr.set_cookie('email', cur_user.email)
@@ -64,8 +67,10 @@ def registrate(request: Request, db: Session = Depends(get_db), email=Form(), pa
     if password == password2:
         db_user = crud.get_user_by_email(db, email=email)
         if db_user:
-            return templates.TemplateResponse("registration.html", context={"request": request, "error": "Аккаунт уже существует"})
-        return crud.reg_user(db, email, password)
+            return templates.TemplateResponse("registration.html",
+                                              context={"request": request, "error": "Аккаунт с таким именем уже существует"})
+        crud.reg_user(db, email, password)
+        return RedirectResponse('/enter_page', status_code=status.HTTP_302_FOUND)
     return templates.TemplateResponse("registration.html", context={"request": request, "error": "Пароли не совпадают"})
 
 
@@ -76,9 +81,9 @@ def registration_page(request: Request):
 
 @app.get("/lc")
 def personal_page(
-    request: Request, 
-    email: Annotated[str | None, Cookie()] = None,
-    db: Session = Depends(get_db),
+        request: Request,
+        email: Annotated[str | None, Cookie()] = None,
+        db: Session = Depends(get_db),
 ):
     if email is None:
         return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
@@ -95,25 +100,32 @@ def personal_page(
     orders = db.execute(text(query).bindparams(email=email)).mappings().all()
     return templates.TemplateResponse(
         "lc.html",
-        context={"request": request, 'orders': orders, 'email': email, 'cart': current_cart, 'price': price, 'item_ids': item_ids},
+        context={"request": request, 'orders': orders, 'email': email, 'cart': current_cart, 'price': price,
+                 'item_ids': item_ids},
     )
+
 
 @app.get("/worker_page")
 def worker_page(
-    request: Request,
-    email: Annotated[str | None, Cookie()] = None,
-    db: Session = Depends(get_db),
+        request: Request,
+        email: Annotated[str | None, Cookie()] = None,
+        db: Session = Depends(get_db),
 ):
     if email is None:
         return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
     query = "SELECT c.id, it.id AS itemid, it.title, it.price, it.image_url FROM carts AS c JOIN items AS it ON c.item_id=it.id WHERE email=:email;"
     current_cart = db.execute(text(query).bindparams(email=email)).mappings().all()
     query = "SELECT * FROM orders WHERE active=1"
-    current_orders = db.execute(text(query)).mappings().all()
-    print(current_orders)
+    orders = db.execute(text(query)).mappings().all()
     query = "SELECT * FROM items"
-    current_orders = db.execute(text(query)).mappings().all()
-    print(current_orders)
+    items = db.execute(text(query)).mappings().all()
+    for i in range(len(orders)):
+        ordered = orders[i]['ordered_items']
+        orders[i] = dict(orders[i])
+        orders[i]['ordered_items'] = {}
+        for item in items:
+            if str(item['id']) in ordered:
+                orders[i]['ordered_items'][item['title']] = ordered.count(str(item['id']))
     price = 0
     item_ids = []
     for item in current_cart:
@@ -121,20 +133,20 @@ def worker_page(
         item_ids.append(item.itemid)
     item_ids = ','.join((str(v) for v in item_ids))
 
-    query = "SELECT * FROM orders WHERE email=:email"
-    orders = db.execute(text(query).bindparams(email=email)).mappings().all()
+    # query = "SELECT * FROM orders WHERE email=:email"
+    # orders = db.execute(text(query).bindparams(email=email)).mappings().all()
     return templates.TemplateResponse(
         "worker_lc.html",
-        context={"request": request, 'orders': orders, 'email': email, 'cart': current_cart, 'price': price, 'item_ids': item_ids},
+        context={"request": request, 'orders': orders, 'email': email, 'cart': current_cart, 'price': price,
+                 'item_ids': item_ids},
     )
-
 
 
 @app.get('/add_to_cart')
 def add_item_to_cart(
-    item_id: int | None = Query(default=None),
-    email: Annotated[str | None, Cookie()] = None,
-    db: Session = Depends(get_db),
+        item_id: int | None = Query(default=None),
+        email: Annotated[str | None, Cookie()] = None,
+        db: Session = Depends(get_db),
 ):
     if not email:
         return RedirectResponse('/enter_page', status_code=status.HTTP_302_FOUND)
@@ -153,10 +165,25 @@ def add_item_to_cart(
     return RedirectResponse('/', status_code=status.HTTP_302_FOUND)
 
 
+@app.get('/inactive_order')
+def delete_item_from_cart(
+        id: int | None = Query(default=None),
+        db: Session = Depends(get_db),
+):
+    try:
+        # query = 'DELETE FROM carts WHERE id=:id;'
+        query = 'UPDATE orders SET active=0 WHERE id=:id;'
+        db.execute(text(query).bindparams(id=id))
+        db.commit()
+    except Exception as e:
+        print(f'error while updating order.active {e}')
+    return RedirectResponse('/worker_page', status_code=status.HTTP_302_FOUND)
+
+
 @app.get('/delete_from_cart')
 def delete_item_from_cart(
-    id: int | None = Query(default=None), 
-    db: Session = Depends(get_db),
+        id: int | None = Query(default=None),
+        db: Session = Depends(get_db),
 ):
     try:
         query = 'DELETE FROM carts WHERE id=:id;'
@@ -169,10 +196,10 @@ def delete_item_from_cart(
 
 @app.get('/confirm_order')
 def confirm_order(
-    item_ids: str | None = Query(default=None),
-    price: int | None = Query(default=None),
-    email: Annotated[str | None, Cookie()] = None,
-    db: Session = Depends(get_db),
+        item_ids: str | None = Query(default=None),
+        price: int | None = Query(default=None),
+        email: Annotated[str | None, Cookie()] = None,
+        db: Session = Depends(get_db),
 ):
     try:
         order = models.Order(
@@ -245,4 +272,3 @@ async def fill_database():
     session.add(item5)
     session.add(item6)
     session.commit()
-

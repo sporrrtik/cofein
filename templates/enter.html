@@ -5,6 +5,9 @@
     <title>Личный кабинет</title>
 </head>
 <body>
+{% if error %}
+{{ error }}
+{% endif %}
 <h2>Форма ввода</h2>
     <form action="enter" method="post">
         <p>
@@ -15,7 +18,7 @@
             Password:<br>
             <input name="password" type="password"/>
         </p>
-        <input type="submit" value="Send" />
+        <input type="submit" value="Войти" />
     </form>
     Еще нет аккаунта? <a href="/registration_page">Зарегистрируйтесь</a>
 </body>
